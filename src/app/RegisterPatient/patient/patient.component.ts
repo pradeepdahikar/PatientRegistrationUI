@@ -27,7 +27,6 @@ export class PatientComponent implements OnInit {
     this.getStates();
     this._newDate = this.datePipe.transform(this._date, 'yyyy-MM-dd');
     this.createForm();
-    this._patient = { Name: "", SurName: '', Gender: '', CityId: 0, DOB: null };
   }
 
   ngOnInit() {
@@ -35,7 +34,7 @@ export class PatientComponent implements OnInit {
   }
 
   getStates() {
-    this._httpClinet.get("http://localhost:50672/api/States")
+    this._httpClinet.get("http://localhost:50672/api/Location/State")
       .subscribe(
         response => {
           this._states = response;
@@ -45,7 +44,7 @@ export class PatientComponent implements OnInit {
   }
 
   getCities(stateId: number) {
-    this._httpClinet.get("http://localhost:50672/api/Cities/" + stateId)
+    this._httpClinet.get("http://localhost:50672/api/Location/City/" + stateId)
       .subscribe(
         response => {
           this._cities = response;
@@ -54,8 +53,7 @@ export class PatientComponent implements OnInit {
   }
 
   getPatients() {
-    debugger;
-    this._httpClinet.get("http://localhost:50672/api/GetPatient")
+    this._httpClinet.get("http://localhost:50672/api/Patient")
       .subscribe(
         response => {
           this._patients = response;
@@ -73,22 +71,23 @@ export class PatientComponent implements OnInit {
       City: ['']
     });
   }
-  
+
   SavePatientData() {
-    this._patient.Name = this._form.controls['Name'].value;
-    this._patient.SurName = this._form.controls['SurName'].value;
-    this._patient.DOB = this._form.controls['DOB'].value;
-    this._patient.Gender = this._form.controls['Gender'].value;
-    this._patient.CityId = this._form.controls['City'].value;
-    let _body = JSON.stringify(this._patient);
+    const patient = new Patient();
+    patient.name = this._form.controls['Name'].value;
+    patient.surName = this._form.controls['SurName'].value;
+    patient.dob = this._form.controls['DOB'].value;
+    patient.gender = this._form.controls['Gender'].value;
+    patient.cityId = parseInt(this._form.controls['City'].value);
     const _headers = new HttpHeaders().set('content-type', 'application/json');
     let options = {
       headers: _headers
     };
     debugger;
-    this._httpClinet.post("http://localhost:50672/api/SavePatient",_body,options)
+    this._httpClinet.post("http://localhost:50672/api/Patient", patient, options)
       .subscribe(
         data => {
+          debugger;
           this._response = data;
         }
       );

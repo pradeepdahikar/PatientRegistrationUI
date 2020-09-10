@@ -1,8 +1,8 @@
-export interface Patient
+export class Patient
 {
-    Name:string,
-    SurName:string,
-    DOB:Date,
-    Gender:string,
-    CityId:number
+    name:string;
+    surName:string;
+    dob:string;
+    gender:string;
+    cityId:number
 }
