@@ -1,0 +1,84 @@
+<form [formGroup]="_form">
+    <div style="margin-left: 40px;">
+        <div>
+            <h4>Patient Registration</h4>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-1">
+                <label class="control-label">Name:</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control" formControlName="Name" pattern="[0-9]*">
+            </div>
+            <div class="col-1">
+                <label class="control-label">Surname:</label>
+            </div>
+            <div class="col-2">
+                <input type="text" class="form-control" formControlName="SurName">
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-1">
+                <label class="control-label">Birth Date:</label>
+            </div>
+            <div class="col-2">
+                <input type="date" class="form-control" [max]="_newDate" formControlName="DOB">
+            </div>
+            <div class="col-1">
+                <label class="control-label">Gender:</label>
+            </div>
+            <div class="col-2">
+                <select class="form-control" formControlName="Gender">
+                    <option value="M">Male</option>
+                    <option value="F">Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-1">
+                <label class="control-label">State:</label>
+            </div>
+            <div class="col-2">
+                <select class="form-control" (change)="getCities($event.target.value)" formControlName='State'>
+                    <option>--Select--</option>
+                    <option *ngFor="let state of _states" [value]="state.Id">{{state.Name}}</option>
+                </select>
+            </div>
+            <div class="col-1">
+                <label class="control-label">City:</label>
+            </div>
+            <div class="col-2">
+                <select class="form-control" formControlName="City">
+                    <option>--Select--</option>
+                    <option *ngFor="let city of _cities" [value]="city.Id">{{city.Name}}</option>
+                </select>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-5" style="float: left;">
+                <button class="btn btn-primary" (click)="getPatients()">Fetch</button>
+            </div>
+            <div class="col-1">
+                <button class="btn btn-primary" (click)="SavePatientData()">Save</button>
+            </div>
+        </div>
+        <div class="row top-buffer">
+            <div class="col-6">
+                <table class="table table-bordered">
+                    <tr>
+                        <th>Name</th>
+                        <th>Surname</th>
+                        <th>DOB</th>
+                        <th>Gender</th>
+                    </tr>
+                    <tr *ngFor="let patient of _patients">
+                        <td>{{patient.name}}</td>
+                        <td>{{patient.surName}}</td>
+                        <td>{{patient.dob | date : 'dd-MM-yyyy'}}</td>
+                        <td>{{patient.gender}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</form>
