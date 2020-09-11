@@ -15,17 +15,22 @@ export class PatientComponent implements OnInit {
   _states: any = null;
   _cities: any = null;
   _date: Date = new Date();
-  _newDate: string = "";
+  _maxDate: string = "";
   _patients: any = null;
   _form: FormGroup;
   _patient: Patient;
   _response: any = null;
+  _minDate: any = null;
+  _inValidForm: boolean = false;
 
   constructor(private _httpClinet: HttpClient,
     private datePipe: DatePipe,
     private fb: FormBuilder) {
     this.getStates();
-    this._newDate = this.datePipe.transform(this._date, 'yyyy-MM-dd');
+    this._maxDate = this.datePipe.transform(this._date, 'yyyy-MM-dd');
+    var date = new Date();
+    this._minDate = this.datePipe.transform(date.setFullYear(date.getFullYear() - 100), 'yyyy-MM-dd');
+    console.log(date);
     this.createForm();
   }
 
@@ -64,15 +69,21 @@ export class PatientComponent implements OnInit {
   createForm() {
     this._form = this.fb.group({
       Name: ['', Validators.required],
-      SurName: ['', [Validators.required, Validators.minLength(4)]],
-      DOB: [''],
-      Gender: [''],
-      State: [''],
-      City: ['']
+      SurName: ['', [Validators.required]],
+      DOB: ['', [Validators.required]],
+      Gender: ['', [Validators.required]],
+      State: ['', [Validators.required]],
+      City: ['', [Validators.required]]
     });
   }
 
   SavePatientData() {
+    debugger;
+    if (this._form.invalid) {
+      this._inValidForm = true
+      return;
+    }
+    this._inValidForm = false;
     const patient = new Patient();
     patient.name = this._form.controls['Name'].value;
     patient.surName = this._form.controls['SurName'].value;
@@ -83,14 +94,21 @@ export class PatientComponent implements OnInit {
     let options = {
       headers: _headers
     };
-    debugger;
     this._httpClinet.post("http://localhost:50672/api/Patient", patient, options)
       .subscribe(
         data => {
-          debugger;
-          this._response = data;
+          this.getPatients();
+          this._form.reset();
+        },
+        error=>{
+          alert("Patient Details Already Exist.");
         }
       );
+  }
+
+  validateText(event: any) {
+    return (event.charCode > 64 &&
+      event.charCode < 91) || (event.charCode > 96 && event.charCode < 123);
   }
 
 }

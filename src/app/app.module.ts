@@ -7,14 +7,12 @@ import { AppComponent } from './app.component';
 import { PatientComponent } from './RegisterPatient/patient/patient.component';
 import { DatePipe } from '@angular/common'
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { LoginComponent } from './login/login/login.component';
 
 
 @NgModule({
   declarations: [
     AppComponent,
-    PatientComponent,
-    LoginComponent
+    PatientComponent
   ],
   imports: [
     BrowserModule,

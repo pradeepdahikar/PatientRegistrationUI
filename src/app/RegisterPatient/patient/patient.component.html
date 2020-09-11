@@ -1,20 +1,23 @@
-<form [formGroup]="_form">
+<form [formGroup]="_form" id="PatientForm">
     <div class="container">
         <div>
             <h4>Patient Registration</h4>
+            <div *ngIf="_inValidForm">
+                <p style="color: red;font-size: smaller;">All fields are required.</p> 
+         </div>
         </div>
         <div class="row top-buffer">
             <div class="col-2">
                 <label class="control-label">Name:</label>
             </div>
             <div class="col-3">
-                <input type="text" class="form-control" formControlName="Name" pattern="[0-9]*">
+                <input type="text" class="form-control" formControlName="Name" (keypress)="validateText($event)">
             </div>
             <div class="col-2">
                 <label class="control-label">Surname:</label>
             </div>
             <div class="col-3">
-                <input type="text" class="form-control" formControlName="SurName">
+                <input type="text" class="form-control" formControlName="SurName" (keypress)="validateText($event)">
             </div>
         </div>
         <div class="row top-buffer">
@@ -22,7 +25,8 @@
                 <label class="control-label">Birth Date:</label>
             </div>
             <div class="col-3">
-                <input type="date" class="form-control" [max]="_newDate" formControlName="DOB">
+                <input type="date" class="form-control" [max]="_maxDate" [min]="_minDate" formControlName="DOB"
+                    onkeydown="return false">
             </div>
             <div class="col-2">
                 <label class="control-label">Gender:</label>
@@ -40,7 +44,7 @@
             </div>
             <div class="col-3">
                 <select class="form-control" (change)="getCities($event.target.value)" formControlName='State'>
-                    <option [selected]="true">Select State</option>
+                    <option [value]="-1">Select State</option>
                     <option *ngFor="let state of _states" [value]="state.id">{{state.name}}</option>
                 </select>
             </div>
@@ -49,13 +53,13 @@
             </div>
             <div class="col-3">
                 <select class="form-control" formControlName="City">
-                    <option [selected]="true">Select City</option>
+                    <option [value]="-1">Select City</option>
                     <option *ngFor="let city of _cities" [value]="city.id">{{city.name}}</option>
                 </select>
             </div>
         </div>
         <div class="row top-buffer">
-            <div class="col-5" style="float: left;">
+            <div class="col-9" style="float: left;">
                 <button class="btn btn-primary" (click)="getPatients()">Fetch</button>
             </div>
             <div class="col-1">
