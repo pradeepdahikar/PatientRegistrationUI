@@ -1,20 +1,23 @@
-<form [formGroup]="_form">
+<form [formGroup]="form">
     <div class="container">
         <div>
-            <h4>Patient Registration</h4>
+            <h3>Patient Registration</h3>
+            <div *ngIf="inValidData">
+                <span style="color: red;font-size: smaller;">Please enter values for all the fields.</span> 
+         </div>
         </div>
         <div class="row top-buffer">
             <div class="col-2">
                 <label class="control-label">Name:</label>
             </div>
             <div class="col-3">
-                <input type="text" class="form-control" formControlName="Name" pattern="[0-9]*">
+                <input type="text" class="form-control" formControlName="Name" (keypress)="validateData($event)">
             </div>
             <div class="col-2">
                 <label class="control-label">Surname:</label>
             </div>
             <div class="col-3">
-                <input type="text" class="form-control" formControlName="SurName">
+                <input type="text" class="form-control" formControlName="SurName" (keypress)="validateData($event)">
             </div>
         </div>
         <div class="row top-buffer">
@@ -22,13 +25,15 @@
                 <label class="control-label">Birth Date:</label>
             </div>
             <div class="col-3">
-                <input type="date" class="form-control" [max]="_newDate" formControlName="DOB">
+                <input type="date" class="form-control" [max]="maxDate" [min]="minDate" formControlName="DOB"
+                    onkeydown="return false">
             </div>
             <div class="col-2">
                 <label class="control-label">Gender:</label>
             </div>
             <div class="col-3">
                 <select class="form-control" formControlName="Gender">
+                    <option [value]="-1">Select</option>
                     <option value="M">Male</option>
                     <option value="F">Female</option>
                 </select>
@@ -39,9 +44,9 @@
                 <label class="control-label">State:</label>
             </div>
             <div class="col-3">
-                <select class="form-control" (change)="getCities($event.target.value)" formControlName='State'>
-                    <option [selected]="true">Select State</option>
-                    <option *ngFor="let state of _states" [value]="state.id">{{state.name}}</option>
+                <select class="form-control" (change)="getCityByStateId($event.target.value)" formControlName='State'>
+                    <option [value]="-1">Select State</option>
+                    <option *ngFor="let state of states" [value]="state.id">{{state.name}}</option>
                 </select>
             </div>
             <div class="col-2">
@@ -49,17 +54,17 @@
             </div>
             <div class="col-3">
                 <select class="form-control" formControlName="City">
-                    <option [selected]="true">Select City</option>
-                    <option *ngFor="let city of _cities" [value]="city.id">{{city.name}}</option>
+                    <option [value]="-1">Select City</option>
+                    <option *ngFor="let city of cities" [value]="city.id">{{city.name}}</option>
                 </select>
             </div>
         </div>
         <div class="row top-buffer">
-            <div class="col-5" style="float: left;">
-                <button class="btn btn-primary" (click)="getPatients()">Fetch</button>
+            <div class="col-9" style="float: left;">
+                <button class="btn btn-primary" (click)="getPatientsList()">Fetch</button>
             </div>
             <div class="col-1">
-                <button class="btn btn-primary" (click)="SavePatientData()">Save</button>
+                <button class="btn btn-primary" (click)="RegisterPatient()">Save</button>
             </div>
         </div>
         <div class="row top-buffer">
@@ -71,7 +76,7 @@
                         <th>DOB</th>
                         <th>Gender</th>
                     </tr>
-                    <tr *ngFor="let patient of _patients">
+                    <tr *ngFor="let patient of patients">
                         <td>{{patient.name}}</td>
                         <td>{{patient.surName}}</td>
                         <td>{{patient.dob | date : 'dd-MM-yyyy'}}</td>
