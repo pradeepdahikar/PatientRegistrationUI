@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClientModule, HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { Patient } from './../../Classes/CommonClasses';
+import { Patient } from '../../Classes/Classes';
 import { DatePipe } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms'
+import { LocationService } from '../../Services/location.service'
 
 @Component({
   selector: 'app-patient',
@@ -11,7 +12,7 @@ import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } 
   styleUrls: ['./patient.component.css']
 })
 
-export class PatientComponent implements OnInit {
+export class PatientComponent {
   _states: any = null;
   _cities: any = null;
   _date: Date = new Date();
@@ -23,38 +24,24 @@ export class PatientComponent implements OnInit {
   _minDate: any = null;
   _inValidForm: boolean = false;
 
-  constructor(private _httpClinet: HttpClient,
+
+  constructor(
+    private _httpClinet: HttpClient,
     private datePipe: DatePipe,
-    private fb: FormBuilder) {
-    this.getStates();
+    private fb: FormBuilder,
+    private _location: LocationService
+  ) {
+    this._location.getStates().subscribe(
+      response => {
+        this._states = response;
+      },
+      error => { console.log(error) }
+    );
     this._maxDate = this.datePipe.transform(this._date, 'yyyy-MM-dd');
     var date = new Date();
     this._minDate = this.datePipe.transform(date.setFullYear(date.getFullYear() - 100), 'yyyy-MM-dd');
     console.log(date);
     this.createForm();
-  }
-
-  ngOnInit() {
-
-  }
-
-  getStates() {
-    this._httpClinet.get("http://localhost:50672/api/Location/State")
-      .subscribe(
-        response => {
-          this._states = response;
-        },
-        (error: any) => { console.log(error) }
-      )
-  }
-
-  getCities(stateId: number) {
-    this._httpClinet.get("http://localhost:50672/api/Location/City/" + stateId)
-      .subscribe(
-        response => {
-          this._cities = response;
-        }
-      )
   }
 
   getPatients() {
@@ -77,8 +64,7 @@ export class PatientComponent implements OnInit {
     });
   }
 
-  SavePatientData() {
-    debugger;
+  savePatientData() {
     if (this._form.invalid) {
       this._inValidForm = true
       return;
@@ -100,16 +86,25 @@ export class PatientComponent implements OnInit {
           this.getPatients();
           this._form.reset();
         },
-        error=>{
+        error => {
           alert("Patient Details Already Exist.");
         }
       );
   }
 
-  //Validate Data
   validateText(event: any) {
     return (event.charCode > 64 &&
       event.charCode < 91) || (event.charCode > 96 && event.charCode < 123);
   }
 
+  bindCities(stateId: number) {
+    this._location.getCities(stateId)
+    .subscribe(
+      response=>{
+        debugger;
+        this._cities=response;
+      },
+      error=>{console.log(error)}
+    );
+  }
 }

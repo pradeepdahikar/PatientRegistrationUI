@@ -43,7 +43,7 @@
                 <label class="control-label">State:</label>
             </div>
             <div class="col-3">
-                <select class="form-control" (change)="getCities($event.target.value)" formControlName='State'>
+                <select class="form-control" (change)="bindCities($event.target.value)" formControlName='State'>
                     <option [value]="-1">Select State</option>
                     <option *ngFor="let state of _states" [value]="state.id">{{state.name}}</option>
                 </select>
@@ -63,7 +63,7 @@
                 <button class="btn btn-primary" (click)="getPatients()">Fetch</button>
             </div>
             <div class="col-1">
-                <button class="btn btn-primary" (click)="SavePatientData()">Save</button>
+                <button class="btn btn-primary" (click)="savePatientData()">Save</button>
             </div>
         </div>
         <div class="row top-buffer">
